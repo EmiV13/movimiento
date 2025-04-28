@@ -1,2 +1,2 @@
 # movimiento
-pieza interactiva con Aprendizaje de Maquina 
+Pieza con aprendizaje para Maquinas
