@@ -1,2 +1,2 @@
-# WE GON BE ALRIGTH
+# movimiento
 Pieza con aprendizaje para Maquinas
