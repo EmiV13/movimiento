@@ -10,9 +10,8 @@ let smoothedX = 0;
 let smoothedY = 0;
 
 function preload() {
-  bodyPose = ml5.bodyPose();
   soundFormats('mp3', 'ogg');
-  mySound = loadSound('/assets/ALRIGHT');
+  mySound = loadSound('assets/ALRIGHT.mp3'); // Ruta corregida
   img = loadImage('assets/KENDRICK.png');
 }
 
@@ -28,7 +27,12 @@ function setup() {
   
   img.resize(100, 0);
   
-  bodyPose.detectStart(video, gotPoses);
+  bodyPose = ml5.poseNet(video, modelReady); // Usamos poseNet de ml5
+  bodyPose.on('pose', gotPoses);              // Escuchamos eventos de poses
+}
+
+function modelReady() {
+  console.log('Modelo PoseNet cargado');
 }
 
 function gotPoses(results) {
@@ -46,9 +50,9 @@ function draw() {
 }
 
 function processPoses() {
-  const pose = poses[0];
-  const rightWrist = pose.keypoints[9];
-  const leftWrist = pose.keypoints[10];
+  const pose = poses[0].pose; // OJO: PoseNet devuelve un objeto con propiedad 'pose'
+  const rightWrist = pose.rightWrist;
+  const leftWrist = pose.leftWrist;
   
   if (rightWrist.confidence > 0.1) {
     drawRightWrist(rightWrist);
@@ -60,25 +64,21 @@ function processPoses() {
 }
 
 function drawRightWrist(wrist) {
-  // Círculo indicador
   fill(0, 0, 255);
   noStroke();
   circle(wrist.x, wrist.y, 30);
   
-  // Texto ondulante en cuadrante superior derecho
-  if (wrist.x > width/2 && wrist.y < height/2) {
+  if (wrist.x > width / 2 && wrist.y < height / 2) {
     drawFloatingText(wrist, 'WE GON BE ALRIGHT');
   }
 }
 
 function drawLeftWrist(wrist) {
-  // Círculo indicador
   fill(255, 0, 0);
   noStroke();
   circle(wrist.x, wrist.y, 30);
   
-  // Imagen en cuadrante superior izquierdo
-  if (wrist.x < width/2 && wrist.y < height/2) {
+  if (wrist.x < width / 2 && wrist.y < height / 2) {
     smoothedX = lerp(smoothedX, wrist.x, 0.2);
     smoothedY = lerp(smoothedY, wrist.y, 0.2);
     
@@ -106,11 +106,8 @@ function drawFloatingText(wrist, texto) {
   for (let k = 0; k < texto.length; k++) {
     let letra = texto[k];
     let offset = k * 25;
-    
-    // Movimiento ondulatorio vertical
     let yOffset = sin(angle + k * 0.3) * 25;
     
-    // Color gris oscuro con variación de brillo
     let brightness = map(sin(angle + k * 0.2), -1, 1, 30, 70);
     fill(brightness, 70);
     
