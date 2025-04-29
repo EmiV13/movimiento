@@ -1,4 +1,4 @@
-let poseDetector;
+let poseNet;
 let video;
 let poses = [];
 let img;
@@ -27,13 +27,12 @@ function setup() {
 
   img.resize(100, 0);
 
-  // Inicializar poseDetector con el modelo MoveNet
-  poseDetector = ml5.poseDetection(video, { modelType: 'single' }, modelReady);
-  poseDetector.on('pose', gotPoses);
+  poseNet = ml5.poseNet(video, modelReady);
+  poseNet.on('pose', gotPoses);
 }
 
 function modelReady() {
-  console.log('Modelo poseDetection cargado');
+  console.log('Modelo PoseNet cargado');
 }
 
 function gotPoses(results) {
@@ -51,16 +50,16 @@ function draw() {
 }
 
 function processPoses() {
-  const keypoints = poses[0].keypoints;
+  const pose = poses[0].pose;
 
-  const rightWrist = keypoints.find(k => k.name === 'right_wrist');
-  const leftWrist = keypoints.find(k => k.name === 'left_wrist');
+  const rightWrist = pose.rightWrist;
+  const leftWrist = pose.leftWrist;
 
-  if (rightWrist && rightWrist.score > 0.1) {
+  if (rightWrist && rightWrist.confidence > 0.1) {
     drawRightWrist(rightWrist);
   }
 
-  if (leftWrist && leftWrist.score > 0.1) {
+  if (leftWrist && leftWrist.confidence > 0.1) {
     drawLeftWrist(leftWrist);
   }
 }
