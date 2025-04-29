@@ -1,4 +1,4 @@
-let bodyPose;
+let poseNet;
 let video;
 let poses = [];
 let img;
@@ -10,9 +10,8 @@ let smoothedX = 0;
 let smoothedY = 0;
 
 function preload() {
-  bodyPose = ml5.bodyPose();
   soundFormats('mp3', 'ogg');
-  mySound = loadSound('assets/ALRIGHT');
+  mySound = loadSound('assets/ALRIGHT.mp3');
   img = loadImage('assets/KENDRICK.png');
 }
 
@@ -28,7 +27,13 @@ function setup() {
   
   img.resize(100, 0);
   
-  bodyPose.detectStart(video, gotPoses);
+  // Aquí cambiamos ml5.bodyPose() por ml5.poseNet()
+  poseNet = ml5.poseNet(video, modelReady);
+  poseNet.on('pose', gotPoses);
+}
+
+function modelReady() {
+  console.log('PoseNet is ready!');
 }
 
 function gotPoses(results) {
