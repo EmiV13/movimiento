@@ -27,7 +27,7 @@ function setup() {
   
   img.resize(100, 0);
   
-  bodyPose = ml5.poseNet(video, modelReady); // Usamos poseNet de ml5
+  bodyPose = ml5.bodyPose(video, modelReady); // Usamos poseNet de ml5
   bodyPose.on('pose', gotPoses);              // Escuchamos eventos de poses
 }
 
