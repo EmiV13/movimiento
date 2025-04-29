@@ -50,16 +50,17 @@ function draw() {
 }
 
 function processPoses() {
-  const pose = poses[0].pose; // OJO: PoseNet devuelve un objeto con propiedad 'pose'
-  const rightWrist = pose.rightWrist;
-  const leftWrist = pose.leftWrist;
-  
-  if (rightWrist.confidence > 0.1) {
-    drawRightWrist(rightWrist);
+  const pose = poses[0].pose;
+
+  const rightWrist = pose.keypoints.find(k => k.part === 'rightWrist');
+  const leftWrist = pose.keypoints.find(k => k.part === 'leftWrist');
+
+  if (rightWrist && rightWrist.score > 0.1) {
+    drawRightWrist(rightWrist.position);
   }
-  
-  if (leftWrist.confidence > 0.1) {
-    drawLeftWrist(leftWrist);
+
+  if (leftWrist && leftWrist.score > 0.1) {
+    drawLeftWrist(leftWrist.position);
   }
 }
 
