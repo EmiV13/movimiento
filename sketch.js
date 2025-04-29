@@ -1,4 +1,4 @@
-let bodyPose;
+let poseDetector;
 let video;
 let poses = [];
 let img;
@@ -11,7 +11,7 @@ let smoothedY = 0;
 
 function preload() {
   soundFormats('mp3', 'ogg');
-  mySound = loadSound('assets/ALRIGHT.mp3'); // Ruta corregida
+  mySound = loadSound('assets/ALRIGHT.mp3');
   img = loadImage('assets/KENDRICK.png');
 }
 
@@ -27,12 +27,13 @@ function setup() {
 
   img.resize(100, 0);
 
-  bodyPose = ml5.bodyPose(video, modelReady);
-  bodyPose.on('pose', gotPoses);
+  // Inicializar poseDetector con el modelo MoveNet
+  poseDetector = ml5.poseDetection(video, { modelType: 'single' }, modelReady);
+  poseDetector.on('pose', gotPoses);
 }
 
 function modelReady() {
-  console.log('Modelo PoseNet cargado');
+  console.log('Modelo poseDetection cargado');
 }
 
 function gotPoses(results) {
@@ -50,17 +51,17 @@ function draw() {
 }
 
 function processPoses() {
-  const pose = poses[0].pose;
+  const keypoints = poses[0].keypoints;
 
-  const rightWrist = pose.keypoints.find(k => k.part === 'rightWrist');
-  const leftWrist = pose.keypoints.find(k => k.part === 'leftWrist');
+  const rightWrist = keypoints.find(k => k.name === 'right_wrist');
+  const leftWrist = keypoints.find(k => k.name === 'left_wrist');
 
   if (rightWrist && rightWrist.score > 0.1) {
-    drawRightWrist(rightWrist.position);
+    drawRightWrist(rightWrist);
   }
 
   if (leftWrist && leftWrist.score > 0.1) {
-    drawLeftWrist(leftWrist.position);
+    drawLeftWrist(leftWrist);
   }
 }
 
