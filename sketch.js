@@ -25,7 +25,6 @@ function setup() {
   video.size(width, height);
   video.hide();
   
-  img.resize(100, 0);
   
   // Aquí cambiamos ml5.bodyPose() por ml5.poseNet()
   poseNet = ml5.poseNet(video, modelReady);
