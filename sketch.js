@@ -25,18 +25,17 @@ function setup() {
   video.size(width, height);
   video.hide();
   
+  img.resize(100, 0); // Ajustar tamaño de la imagen
   
-  // Aquí cambiamos ml5.bodyPose() por ml5.poseNet()
+  // Inicializar PoseNet
   poseNet = ml5.poseNet(video, modelReady);
-  poseNet.on('pose', gotPoses);
+  poseNet.on('pose', function(results) {
+    poses = results;
+  });
 }
 
 function modelReady() {
-  console.log('PoseNet is ready!');
-}
-
-function gotPoses(results) {
-  poses = results;
+  console.log('PoseNet está listo');
 }
 
 function draw() {
@@ -50,41 +49,39 @@ function draw() {
 }
 
 function processPoses() {
-  const pose = poses[0];
-  const rightWrist = pose.keypoints[9];
-  const leftWrist = pose.keypoints[10];
-  
-  if (rightWrist.confidence > 0.1) {
-    drawRightWrist(rightWrist);
+  const pose = poses[0].pose;
+  const keypoints = pose.keypoints;
+
+  const rightWrist = keypoints.find(k => k.part === 'rightWrist');
+  const leftWrist = keypoints.find(k => k.part === 'leftWrist');
+
+  if (rightWrist && rightWrist.score > 0.1) {
+    drawRightWrist(rightWrist.position);
   }
-  
-  if (leftWrist.confidence > 0.1) {
-    drawLeftWrist(leftWrist);
+
+  if (leftWrist && leftWrist.score > 0.1) {
+    drawLeftWrist(leftWrist.position);
   }
 }
 
-function drawRightWrist(wrist) {
-  // Círculo indicador
+function drawRightWrist(position) {
   fill(0, 0, 255);
   noStroke();
-  circle(wrist.x, wrist.y, 30);
-  
-  // Texto ondulante en cuadrante superior derecho
-  if (wrist.x > width/2 && wrist.y < height/2) {
-    drawFloatingText(wrist, 'WE GON BE ALRIGHT');
+  circle(position.x, position.y, 30);
+
+  if (position.x > width/2 && position.y < height/2) {
+    drawFloatingText(position, 'WE GON BE ALRIGHT');
   }
 }
 
-function drawLeftWrist(wrist) {
-  // Círculo indicador
+function drawLeftWrist(position) {
   fill(255, 0, 0);
   noStroke();
-  circle(wrist.x, wrist.y, 30);
-  
-  // Imagen en cuadrante superior izquierdo
-  if (wrist.x < width/2 && wrist.y < height/2) {
-    smoothedX = lerp(smoothedX, wrist.x, 0.2);
-    smoothedY = lerp(smoothedY, wrist.y, 0.2);
+  circle(position.x, position.y, 30);
+
+  if (position.x < width/2 && position.y < height/2) {
+    smoothedX = lerp(smoothedX, position.x, 0.2);
+    smoothedY = lerp(smoothedY, position.y, 0.2);
     
     push();
     imageMode(CENTER);
@@ -103,9 +100,9 @@ function drawLeftWrist(wrist) {
   }
 }
 
-function drawFloatingText(wrist, texto) {
+function drawFloatingText(position, texto) {
   push();
-  translate(wrist.x, wrist.y);
+  translate(position.x, position.y);
   
   for (let k = 0; k < texto.length; k++) {
     let letra = texto[k];
