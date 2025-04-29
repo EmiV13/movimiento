@@ -17,18 +17,18 @@ function preload() {
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  
+
   painting = createGraphics(width, height);
   painting.clear();
-  
+
   video = createCapture(VIDEO);
   video.size(width, height);
   video.hide();
-  
+
   img.resize(100, 0);
-  
-  bodyPose = ml5.bodyPose(video, modelReady); // Usamos poseNet de ml5
-  bodyPose.on('pose', gotPoses);              // Escuchamos eventos de poses
+
+  bodyPose = ml5.bodyPose(video, modelReady);
+  bodyPose.on('pose', gotPoses);
 }
 
 function modelReady() {
@@ -41,11 +41,11 @@ function gotPoses(results) {
 
 function draw() {
   image(video, 0, 0, width, height);
-  
+
   if (poses.length > 0) {
     processPoses();
   }
-  
+
   image(painting, 0, 0);
 }
 
@@ -68,7 +68,7 @@ function drawRightWrist(wrist) {
   fill(0, 0, 255);
   noStroke();
   circle(wrist.x, wrist.y, 30);
-  
+
   if (wrist.x > width / 2 && wrist.y < height / 2) {
     drawFloatingText(wrist, 'WE GON BE ALRIGHT');
   }
@@ -78,16 +78,16 @@ function drawLeftWrist(wrist) {
   fill(255, 0, 0);
   noStroke();
   circle(wrist.x, wrist.y, 30);
-  
+
   if (wrist.x < width / 2 && wrist.y < height / 2) {
     smoothedX = lerp(smoothedX, wrist.x, 0.2);
     smoothedY = lerp(smoothedY, wrist.y, 0.2);
-    
+
     push();
     imageMode(CENTER);
     image(img, smoothedX, smoothedY);
     pop();
-    
+
     if (!soundPlaying) {
       mySound.loop();
       soundPlaying = true;
@@ -103,20 +103,20 @@ function drawLeftWrist(wrist) {
 function drawFloatingText(wrist, texto) {
   push();
   translate(wrist.x, wrist.y);
-  
+
   for (let k = 0; k < texto.length; k++) {
     let letra = texto[k];
     let offset = k * 25;
     let yOffset = sin(angle + k * 0.3) * 25;
-    
+
     let brightness = map(sin(angle + k * 0.2), -1, 1, 30, 70);
     fill(brightness, 70);
-    
+
     textSize(25);
     textStyle(BOLD);
     text(letra, offset, yOffset);
   }
-  
+
   pop();
   angle += 0.05;
 }
