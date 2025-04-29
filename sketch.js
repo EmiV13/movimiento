@@ -11,7 +11,7 @@ let smoothedY = 0;
 
 function preload() {
   soundFormats('mp3', 'ogg');
-  mySound = loadSound('/assets/ALRIGHT');
+mySound = loadSound('assets/ALRIGHT.mp3');
   
   // Cargar y redimensionar la imagen en preload()
   img = loadImage('assets/KENDRICK.png', () => {
