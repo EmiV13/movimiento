@@ -52,15 +52,15 @@ function draw() {
 function processPoses() {
   const pose = poses[0].pose;
 
-  const rightWrist = pose.rightWrist;
-  const leftWrist = pose.leftWrist;
+  const rightWrist = pose.keypoints.find(k => k.part === 'rightWrist');
+  const leftWrist = pose.keypoints.find(k => k.part === 'leftWrist');
 
-  if (rightWrist && rightWrist.confidence > 0.1) {
-    drawRightWrist(rightWrist);
+  if (rightWrist && rightWrist.score > 0.1) {
+    drawRightWrist(rightWrist.position);
   }
 
-  if (leftWrist && leftWrist.confidence > 0.1) {
-    drawLeftWrist(leftWrist);
+  if (leftWrist && leftWrist.score > 0.1) {
+    drawLeftWrist(leftWrist.position);
   }
 }
 
