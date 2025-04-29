@@ -12,7 +12,7 @@ let smoothedY = 0;
 function preload() {
   bodyPose = ml5.bodyPose();
   soundFormats('mp3', 'ogg');
-  mySound = loadSound('/assets/ALRIGHT');
+  mySound = loadSound('assets/ALRIGHT');
   img = loadImage('assets/KENDRICK.png');
 }
 
